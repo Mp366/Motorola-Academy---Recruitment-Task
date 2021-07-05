@@ -1,0 +1,206 @@
+using System;
+using System.IO;
+using System.Text;
+using System.Collections.Generic;
+
+
+public class HangmanGame
+{
+
+    public static string LoadFile()
+    {
+        string[] lines = System.IO.File.ReadAllLines(@"C:\Users\powal\Desktop\Motorola Academy - Recruitment Task\Motorola Academy - Recruitment Task\countries_and_capitals.txt");
+        Random rnd = new Random();
+        int rand_word = rnd.Next(lines.Length);
+        return (lines[rand_word]);
+    }
+
+
+    public static void Main()
+    {
+        for (; ; )
+        {
+            // MENU
+            Console.Clear();
+            Console.WriteLine("The Hangman Game \n");
+            Console.WriteLine("1. Play");
+            Console.WriteLine("2. How to play");
+            Console.WriteLine("3. Ranking");
+            Console.WriteLine("4. Exit");
+
+            Console.Write("\r\nSelect an option: ");
+
+            switch (Console.ReadLine())
+            {
+                case "1":
+
+                    string quess_word = LoadFile();
+                    int charPos = quess_word.IndexOf('|');
+
+                    string country = quess_word.Remove(charPos - 1);
+                    string capital = quess_word.Substring(charPos + 2);
+
+
+                    string capital_upper = capital.ToUpper();
+                    char[] capital_upper2;
+                    capital_upper2 = capital_upper.ToCharArray();
+
+
+                    char[] underscore;
+                    underscore = capital.ToCharArray();
+
+                    // Zamiana liter
+                    for (int i = 0; i < underscore.Length; i++)
+                    {
+                        if (Char.IsWhiteSpace(underscore[i]) == false)
+                        {
+                            underscore[i] = '_';
+                        }
+                    }
+
+
+
+                    string answer;
+                    char[] word = new char[1];
+
+                    //  Tablica na zle symbole
+                    Stack<string> wrong = new Stack<string>();
+
+                    //  Rozpoczecie petli zgadywania
+                    int life = 6;
+                    int attempt = 0;
+
+                    do
+                    {
+                        Console.Clear();
+                        Console.WriteLine("The Hangman Game \n");
+                        Console.WriteLine("Life: " + life + "; Attempt: " + attempt);
+
+                        Console.Write("Not-in-word: ");
+                        foreach (string abc in wrong)
+                        {
+                            Console.Write(abc + ", ");
+
+                        }
+
+                        Console.WriteLine("\n");
+                        Console.WriteLine(underscore);
+                        //Hint                        
+                        if (life < 3)
+                        {
+                            Console.WriteLine("\nHint: The capital of " + country);
+                        }
+
+
+
+                        Console.WriteLine("\nEnter a letter or try to guess the country:");
+                        answer = Console.ReadLine();
+                        answer = answer.ToUpper();
+
+                        //Wrong symbol
+
+                        if (answer.Length == 1)
+                        {
+                            word = answer.ToCharArray();
+
+                            if (Char.IsWhiteSpace(word[0]) == true)
+                            {
+                                Console.WriteLine("\nWrong symbol entered!");
+                                Console.WriteLine("Press any key to continue.");
+                                Console.ReadKey();
+                            }
+                            //Correct letter
+                            else if (capital_upper.IndexOf(answer) != -1)
+                            {
+                                for (int w = 0; w < capital_upper.Length; w++)
+                                {
+                                    if (capital_upper2[w] == word[0])
+                                    {
+                                        underscore[w] = word[0];
+                                    }
+                                }
+
+                                Console.WriteLine("\nCorrect!");
+                                Console.WriteLine("Press any key to continue.");
+                                Console.ReadKey();
+
+                            }
+                            //Wrong letter
+                            else
+                            {
+                                wrong.Push(answer);
+                                Console.WriteLine("\nThe symbol is not in the word!");
+                                Console.WriteLine("Press any key to continue.");
+                                Console.ReadKey();
+                                life--;
+                            }
+                        }
+
+
+                        //Correct word
+
+                        else if (answer.Length != 1 && capital_upper == answer)
+                        {
+                            Console.WriteLine("\nCongratulation! That's the correct answer !");
+                            Console.WriteLine("The capital of " + country + " is " + capital);
+                            Console.WriteLine("Your attempt is:" + attempt);
+                            Console.WriteLine("Press any key to continue.");
+                            Console.ReadKey();
+                            break;
+                        }
+
+                        //Wrong word
+
+                        else if (answer.Length != 1 && capital_upper != answer)
+                        {
+                            Console.WriteLine("Unfortunately the answer is incorrect!");
+                            Console.WriteLine("You lose 2 lifes!");
+                            life = life - 2;
+                            Console.WriteLine("Press any key to continue.");
+                            Console.ReadKey();
+                        }
+
+
+                        else
+                        {
+
+                        }
+                        
+                        attempt++;
+                    }
+                    //End of life
+                    while (life > 0);
+                    Console.Clear();
+                    Console.WriteLine("\nYour life is: " + life!);
+                    Console.WriteLine("\nThe game is over!");
+                    Console.WriteLine("Your attempts:" + attempt);
+                    Console.WriteLine("The capital of " + country + " is " + capital);
+                    Console.WriteLine("\nPress any key to continue.");
+                    Console.ReadKey();
+
+
+                    break;
+                case "2":
+                    Console.WriteLine("The option is not available yet.");
+                    Console.WriteLine("Press any key to continue.");
+                    Console.ReadKey();
+                    break;
+                case "3":
+                    Console.WriteLine("The option is not available yet.");
+                    Console.WriteLine("Press any key to continue.");
+                    Console.ReadKey();
+                    break;
+                case "4":
+                    goto Finish;
+                default:
+                    Console.WriteLine("The wrong number was entered!");
+                    break;
+            }
+
+        }
+    Finish:
+        Console.WriteLine("End of program!");
+    }
+
+
+}
